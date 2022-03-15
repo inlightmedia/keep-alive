@@ -1,0 +1,1 @@
+declare module '@inlightmedia/react-countdown-timer';
