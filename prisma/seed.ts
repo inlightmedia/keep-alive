@@ -1,12 +1,12 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 const db = new PrismaClient();
 
 async function seed() {
-  await Promise.all(
-    getAllSongs().map(song => {
-      return db.song.create({ data: song });
-    })
-  );
+  // await Promise.all(
+  //   getAllSongs().map(song => {
+  //     return db.song.create({ data: song });
+  //   })
+  // );
   await Promise.all(
     getAllUsers().map(user => {
       return db.user.create({ data: user });
@@ -23,7 +23,17 @@ function getAllSongs() {
     {name: 'Jackson Blues'},
     {name: 'Alma Mater Blues'},
     {name: 'Light Blue'},
+    {name: 'Chester Chills Out'},
+    {name: 'Alma Mater Blues'},
+    {name: 'Family Dreams'},
     {name: 'Night Storm'},
+    {name: 'Dreams Come True'},
+    {name: 'Honey Dew'},
+    {name: 'Christowel'},
+    {name: 'Auld Lang Syne'},
+    {name: 'Danny Boy'},
+    {name: 'Amazing Grace'},
+    {name: 'Star Spangled Banner'},
   ];
 }
 
@@ -31,28 +41,101 @@ function getAllUsers() {
     return [
       {
         name: 'Owen',
-        numberOfSongsToPracticePerDay: 15,
-        durationOfPracticeSessionInMinutes: 20,
+        username: 'owendyck',
+        studentProfile: {
+          create: {
+            numberOfSongsToPracticePerDay: 15,
+            durationOfPracticeSessionInMinutes: 20,
+          },
+        },
+        role: Role.STUDENT,
+        passwordHash: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
+      },
+      {
+        name: 'Super Teacher',
+        username: 'superteacher',
+        role: Role.TEACHER,
+        passwordHash: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
+        teacherProfile: {
+          create: {
+            // students: {
+            //     connect: [{
+            //       id: '3849391e-e139-4fa1-bb04-a8e238bd4ff4'
+            //     }],
+            // },
+          }
+        },
+      },
+      {
+        name: 'Smart Teacher',
+        username: 'smartteacher',
+        role: Role.TEACHER,
+        passwordHash: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
+        teacherProfile: {
+          create: {
+          
+          }
+        },
       },
       {
         name: 'Lucas',
-        numberOfSongsToPracticePerDay: 15,
-        durationOfPracticeSessionInMinutes: 20,
+        username: 'lucasdyck',
+        studentProfile: {
+          create: {
+            numberOfSongsToPracticePerDay: 15,
+            durationOfPracticeSessionInMinutes: 20,
+          },
+        },
+        role: Role.STUDENT,
+        passwordHash: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
       },
       {
         name: 'Enessa',
-        numberOfSongsToPracticePerDay: 15,
-        durationOfPracticeSessionInMinutes: 20,
+        username: 'enessadyck',
+        studentProfile: {
+          create: {
+            numberOfSongsToPracticePerDay: 15,
+            durationOfPracticeSessionInMinutes: 20,
+          },
+        },
+        role: Role.STUDENT,
+        passwordHash: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
       },
       {
         name: 'Allia',
-        numberOfSongsToPracticePerDay: 5,
-        durationOfPracticeSessionInMinutes: 15,
+        username: 'alliadyck',
+        studentProfile: {
+          create: {
+            numberOfSongsToPracticePerDay: 15,
+            durationOfPracticeSessionInMinutes: 20,
+          },
+        },
+        role: Role.STUDENT,
+        passwordHash: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
       },
       {
         name: 'Ethan',
-        numberOfSongsToPracticePerDay: 1,
-        durationOfPracticeSessionInMinutes: 5,
+        username: 'ethandyck',
+        studentProfile: {
+          create: {
+            numberOfSongsToPracticePerDay: 15,
+            durationOfPracticeSessionInMinutes: 20,
+          },
+        },
+        role: Role.STUDENT,
+        passwordHash: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
+      },
+      {
+        name: 'Daddy',
+        username: 'daddy',
+        studentProfile: {
+          create: {
+            numberOfSongsToPracticePerDay: 15,
+            durationOfPracticeSessionInMinutes: 20,
+          },
+        },
+        role: Role.STUDENT,
+        passwordHash: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
       },
     ];
   }
