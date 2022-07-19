@@ -1,10 +1,16 @@
 import { json, useLoaderData, ActionFunction, useActionData, LoaderFunction, redirect, Form, Link } from "remix";
 import { db } from "~/utils/db.server";
-import { Song, Role } from '@prisma/client';
+import { Song, Role, User, StudentProfile } from '@prisma/client';
 import { getUser, requireUserId } from "~/utils/session.server";
 
 type LoaderData = {
   userListItems: Array<Pick<Song, | 'id' | 'name'>>;
+  students: (StudentProfile & {
+      user: {
+          name: string;
+          id: string;
+      };
+  })[]
 };
 
 export const loader: LoaderFunction = async ({request}) => {
@@ -14,16 +20,29 @@ export const loader: LoaderFunction = async ({request}) => {
   
   if (!authenticatedTeacherUser) throw new Error("User not found");
 
-  const teacherUser = db.user.findUnique({
+  const teacherUser = await db.user.findUnique({
     where: {
       id:  authenticatedTeacherUser.id
     },
     include: {
-      teacherProfile: true
+      teacherProfile: {
+        select: {
+          students: {
+            include: {
+              user: {
+                select: {
+                  name: true,
+                  id: true
+                }
+              }
+            }
+          }
+        }
+      }
     }
-  })
+  });
 
-  if (!teacherUser.teacherProfile) throw new Error("Expected user to be a teacher");
+  if (!teacherUser?.teacherProfile) throw new Error("Expected user to be a teacher");
 
   const data: LoaderData = {
     userListItems: await db.user.findMany({
@@ -34,7 +53,8 @@ export const loader: LoaderFunction = async ({request}) => {
         id: true,
         name: true,
       }}
-    )
+    ),
+    students: teacherUser?.teacherProfile?.students
   };
   return data;
 };
@@ -188,7 +208,7 @@ export default function Index() {
           <div>
             <h1>My Students</h1>
             <ul>
-              {data.userListItems.map(studentUser => {
+              {data.students.map(studentUser => {
                 return (
                   <li
                     style={{
@@ -199,11 +219,11 @@ export default function Index() {
                     }} 
                     key={studentUser.id}
                   >
-                    <p style={{ marginRight: 20 }}>{studentUser.name}</p>
+                    <p style={{ marginRight: 20 }}>{studentUser.user.name}</p>
                     <div>
-                      <Link style={{ marginRight: 10 }} prefetch="intent" to={`/teachers/student/${studentUser.id}/edit`} className="button"><i style={{ marginRight: 10 }} className="fas fa-pencil" />Manage</Link>
+                      <Link style={{ marginRight: 10 }} prefetch="intent" to={`/teachers/student/${studentUser.user.id}/edit`} className="button"><i style={{ marginRight: 10 }} className="fas fa-pencil" />Manage</Link>
                       {/* <Link style={{ marginRight: 10, pointerEvents: false ? 'none' : 'auto'}} prefetch="intent" to={`/users/${user.id}/practice`} className="button"><i className="fas fa-piano" /></Link> */}
-                      <Link style={{ marginRight: 10, pointerEvents: false ? 'none' : 'auto'}} prefetch="intent" to={`/teachers/student/${studentUser.id}/reports`} className="button"><i style={{ marginRight: 10 }} className="fas fa-chart-line"/>Reports</Link>
+                      <Link style={{ marginRight: 10, pointerEvents: false ? 'none' : 'auto'}} prefetch="intent" to={`/teachers/student/${studentUser.user.id}/reports`} className="button"><i style={{ marginRight: 10 }} className="fas fa-chart-line"/>Reports</Link>
                     </div>
                   </li>
                 )

@@ -74,19 +74,21 @@ export const action: ActionFunction = async ({
         throw new Error(`Form not submitted correctly.`);
       }
     
-      const fields = {
-        name,
-        numberOfSongsToPracticePerDay: parseInt(numberOfSongsToPracticePerDay, 10),
-        durationOfPracticeSessionInMinutes: parseInt(durationOfPracticeSessionInMinutes, 10),
-        listOfSongs: {
-          connect: [{ id: songIdToConnect }]
-        }
-      };
-    
+      console.log('params.userId', params)
+      console.log('parseInt(numberOfSongsToPracticePerDay, 10)', parseInt(numberOfSongsToPracticePerDay, 10))
+
       const user = await db.user.update({
         where: {
-          id: params.userId
-        }, data: fields
+          id: params.studentUserId
+        },
+        data: {
+          studentProfile: {
+            update: {
+              numberOfSongsToPracticePerDay: parseInt(numberOfSongsToPracticePerDay, 10),
+              durationOfPracticeSessionInMinutes: parseInt(durationOfPracticeSessionInMinutes, 10),
+            }
+          }
+        }
       });
     
       return redirect(`/teachers/student/${user.id}/edit`);
